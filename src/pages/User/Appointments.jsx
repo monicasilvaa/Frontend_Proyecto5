@@ -3,42 +3,106 @@ import { Button, Form, Offcanvas, Table } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { CustomInput } from "../../components/CustomInput/CustomInput";
-import { getAppointmentsByClient, getCentersList, getServicesList, getTattooArtistsByCenterId, userUpdate } from "../../services/apiCalls";
+import {
+  appointmentCreate,
+  getAppointmentById,
+  getAppointmentsByClient, getCentersList,
+  getServicesList, getTattooArtistsByCenterId
+} from "../../services/apiCalls";
 import { userData } from "../userSlice";
 import "./Appointments.css";
 
 export const Appointments = () => {
   const navigate = useNavigate();
-  const [profileData, setProfileData] = useState({});
+  const [formSuccess, setFormSuccess] = useState(false);
+  const [formError, setFormError] = useState(false);
+  const [formEditionShow, setFormEditionShow] = useState(false);
+  const [formShow, setFormShow] = useState(true);
+  const [appointment, setAppointment] = useState({});
+  const [appointmentData, setAppointmentData] = useState({});
   const [appointmentsData, setAppointmentsData] = useState(false);
   const [centersData, setCentersData] = useState(false);
   const [tattooArtistsData, setTattoArtistsData] = useState(false);
   const [servicesData, setServicesData] = useState(false);
   const userRdxData = useSelector(userData)
   const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleClose = () => closeForm();
+  const handleShow = () => showForm(true);
 
   const token = userRdxData.credentials.token
+  const id = userRdxData.credentials.userData.userId
 
-  const inputHandler = (event) => {
+  const selectHandler = (event) => {
+    setAppointmentData({});
     getTattooArtistsByCenterId(event.target.value)
     .then((res) => {
       setTattoArtistsData(res);
     })
+
+    inputHandler(event);
   };
+
+  const inputHandler = (event) => {
+    setAppointmentData((prevState) => ({
+        ...prevState,
+        [event.target.name]: event.target.value
+    }))
+
+  }
+
+  const showForm = (event) => {
+    setAppointmentData({});
+    setShow(true);
+    setFormShow(true);
+    setFormError(false);
+  }
+  
+  const closeForm = (event) => {
+    setShow(false);
+    
+    //Obtener citas del cliente
+    getAppointmentsByClient(token)
+    .then((res) => {
+        setAppointmentsData(res.clientAppointments);
+    })
+  }
+
+  const openFormEdition = (id) => {
+    setFormShow(false);
+    setFormEditionShow(true);
+    appointmentData.id = id;
+
+    getAppointmentById(token, id)
+    .then((res) => {
+      setFormShow(false);
+      setFormError(false);
+      setShow(true);
+      setFormEditionShow(true);
+
+        setAppointment(res);
+    })
+    
+  }
 
   const submitHandler = async (event) => {
     //Handler envío de formulario
     event.preventDefault();
         
+    appointmentData.modified_by = userRdxData.credentials.userData.userId;
+    appointmentData.clientUser = userRdxData.credentials.userData.userId;
+
     //Se procede con el login
-    userUpdate(token, myId, profileData)
+    appointmentCreate(token, appointmentData)
       .then((response) => {
-          console.log(response);   
+          if(typeof response.id !== "undefined") {
+            setFormError(false);
+            setFormShow(false);
+            setFormSuccess(true);
+          }   
       })
       .catch((err) => {
-        console.log(err);
+        setFormSuccess(false);
+        setFormError(true)
       });    
   };
 
@@ -55,13 +119,14 @@ export const Appointments = () => {
     .then((res) => {
       setServicesData(res.results);
     })
+//Obtener citas del cliente
+getAppointmentsByClient(token)
+.then((res) => {
+    setAppointmentsData(res.clientAppointments);
+  })
 
-    //Obtener citas del cliente
-    getAppointmentsByClient(token)
-    .then((res) => {
-        setAppointmentsData(res.clientAppointments);
-      })
   }, []);
+
 
   return (
     <>
@@ -75,48 +140,56 @@ export const Appointments = () => {
           <Offcanvas.Title>Nueva cita</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
-          <Form className="shadow p-4 bg-white rounded" onSubmit={submitHandler}>
-              <Form.Select aria-label="Centro" name={"center_id"} onChange={inputHandler}>
-                <option>Centro</option>
-                {centersData.length > 0 ? 
-                  centersData.map(function(data) {
-                      return (
-                        <option value={data.id}>{data.address}</option>
-                      )
-                  })
-                  : "Sin centros"
-                }
-              </Form.Select>
-              <Form.Select aria-label="Tatuador" name={"employee_user_id"}>
-                <option>Tatuador</option>
-                {tattooArtistsData.length > 0 ? 
-                  tattooArtistsData.map(function(data) {
-                      return (
-                        <option value={data.id}>{data.first_name} {data.last_name}</option>
-                      )
-                  })
-                  : "Sin tatuadores"
-                }
-              </Form.Select>
+          {formError ?
+            <p className="danger">No se ha podido crear la cita, tenga en cuenta el horario del centro al hacer la solicitud e inténtelo de nuevo.</p>
+          : ""}
 
-              <Form.Select aria-label="Servicio" name={"service_id"}>
-                <option>Servicio</option>
-                {servicesData.length > 0 ? 
-                  servicesData.map(function(data) {
-                      return (
-                        <option value={data.id}>{data.name}</option>
-                      )
-                  })
-                  : "Sin servicios"
-                }
-              </Form.Select>
+          {formShow? 
+            <Form className="shadow p-4 bg-white rounded" onSubmit={submitHandler}>
+                <Form.Select aria-label="Centro" name={"center_id"} onChange={selectHandler}>
+                  <option>Centro</option>
+                  {centersData.length > 0 ? 
+                    centersData.map(function(data) {
+                        return (
+                          <option key={data.id} value={data.id}>{data.address}</option>
+                        )
+                    })
+                    : "Sin centros"
+                  }
+                </Form.Select>
+                <Form.Select aria-label="Tatuador" name={"employee_user_id"} onChange={inputHandler}>
+                  <option>Tatuador</option>
+                  {tattooArtistsData.length > 0 ? 
+                    tattooArtistsData.map(function(data) {
+                        return (
+                          <option key={data.id} value={data.id}>{data.first_name} {data.last_name}</option>
+                        )
+                    })
+                    : "Sin tatuadores"
+                  }
+                </Form.Select>
 
-              <CustomInput type={"date"} name={"appointment_date"} placeholder="Fecha para cita" ></CustomInput>
-          
-              <Button className="w-100" variant="primary" type="submit">
-                      Actualizar
-                  </Button>
-          </Form>
+                <Form.Select aria-label="Servicio" name={"service_id"} onChange={inputHandler}>
+                  <option>Servicio</option>
+                  {servicesData.length > 0 ? 
+                    servicesData.map(function(data) {
+                        return (
+                          <option key={data.id} value={data.id}>{data.name}</option>
+                        )
+                    })
+                    : "Sin servicios"
+                  }
+                </Form.Select>
+
+                <CustomInput type={"datetime-local"} name={"appointment_date"} placeholder="Fecha para cita" handler={inputHandler}></CustomInput>
+            
+                <Button className="w-100" variant="primary" type="submit" >
+                        Solicitar
+                    </Button>
+            </Form>
+            : <p class="success">La solicitud se ha realizado correctamente, en breve contactaremos contigo</p>
+          }
+
         </Offcanvas.Body>
       </Offcanvas>
         {appointmentsData.length > 0 ? 
@@ -132,11 +205,11 @@ export const Appointments = () => {
               <tbody>
                 {appointmentsData.map(function(data) {
                     return (
-                      <tr>
-                        <td>{data.employeeUser.first_name} {data.employeeUser.last_name}</td>
-                        <td>{data.appointment_date}</td>
-                        <td>{data.center.address}</td>
-                        <td>{data.service.name}</td>
+                      <tr key={data.id}>
+                        <td key={data.employeeUser.first_name}>{data.employeeUser.first_name} {data.employeeUser.last_name}</td>
+                        <td key={data.appointment_date}>{data.appointment_date}</td>
+                        <td key={data.center.address}>{data.center.address}</td>
+                        <td key={data.service.name}>{data.service.name}</td>
                       </tr>            
                     )
                 })}
