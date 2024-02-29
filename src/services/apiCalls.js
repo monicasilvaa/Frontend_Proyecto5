@@ -1,35 +1,20 @@
 import axios from "axios";
+import { API_BASE_URL } from "../constants/constants";
 
 axios.defaults.baseURL = ""
 
-const API_URL = "http://localhost:3000"
-
-export const bringFilteredUsers = async (name, role) => {
-
-    const res = await axios.get(`http://localhost:27017/user/megafiltro?name=${name}&role=${role}`)
-    return res.data
-}
-
-export const bringAllUsers = async (page=1) => {
-    const res = await axios.get(`http://localhost:27017/user/find?page=${page}`)
-    console.log(res)
-    return res.data
-}
-
-export const bringUsersByRole = async (role) => {
-    const res = await axios.get(`http://localhost:27017/user?role=${role}`)
-    return res.data
-}
-
-export const bringAllCharacters = async (url) => {
-    if (url) {
-        const res = await axios.get(url)
-        return res.data
-    } else {
-    const res = await axios.get(`${API_URL}/character`)
-    return res.data
+// Configurar un interceptor de respuesta para todas las solicitudes
+axios.interceptors.response.use(
+    response => response, // Pasar la respuesta sin cambios si es exitosa
+    error => {
+      if (error.response && error.response.status === 401) {
+        // Redirigir a la página de login en caso de respuesta 401
+        window.location.href = '/login';
+      }
+      
+      return Promise.reject(error);
     }
-}
+  );
 
 export const deleteUser = async (token, id) => {
     const config = {
@@ -37,23 +22,28 @@ export const deleteUser = async (token, id) => {
             Authorization: 'Bearer ' + token
         }
     }
-    const res = await axios.delete(`${API_URL}/user/delete/${id}`, config)
-}
-
-export const bringUserById = async (id) => {
-    const res = await axios.get(`${API_URL}/users/${id}`)
-    return res.data
+    const res = await axios.delete(`${API_BASE_URL}/user/delete/${id}`, config)
 }
 
 export const userLogin = async (credentials) => {
-    console.log(credentials)
-    const res = await axios.post(`${API_URL}/auth/login`, credentials)
+    const res = await axios.post(`${API_BASE_URL}/auth/login`, credentials)
     return res.data.token
 }
 
-export const registerUser = async (userData) => {
-    const res = await axios.post(`${API_URL}/auth/register`, userData)
-    return res.data.token
+export const userCreate = async (userData) => {
+    const res = await axios.post(`${API_BASE_URL}/auth/register`, userData)
+    return res.data
+}
+
+export const userUpdate = async (token, id, userData) => {
+    const config = {
+        headers: {
+            Authorization: "Bearer " + token
+        }
+    }
+
+    const res = await axios.patch(`${API_BASE_URL}/api/users/profile/${id}`, userData, config)
+    return res.data
 }
 
 export const getUserById = async (token, id) => {
@@ -62,6 +52,38 @@ export const getUserById = async (token, id) => {
             Authorization: "Bearer " + token
         }
     }
-    const res = await axios.get(`${API_URL}/user/${id}`, config)
+
+    const res = await axios.get(`${API_BASE_URL}/api/users/profile/${id}`, config)
+    return res.data
+}
+
+export const getAppointmentsByClient = async (token) => {
+    const config = {
+        headers: {
+            Authorization: "Bearer " + token
+        }
+    }
+
+    const res = await axios.get(`${API_BASE_URL}/api/users/myAppointments`, config)
+    return res.data
+}
+
+export const getTattooArtistsList = async () => {
+    const res = await axios.get(`${API_BASE_URL}/api/users/tattooArtists`)
+    return res.data
+}
+
+export const getCentersList = async () => {
+    const res = await axios.get(`${API_BASE_URL}/api/centers`)
+    return res.data
+}
+
+export const getServicesList = async () => {
+    const res = await axios.get(`${API_BASE_URL}/api/services`)
+    return res.data
+}
+
+export const getTattooArtistsByCenterId = async (centerId) => {
+    const res = await axios.get(`${API_BASE_URL}/api/users/tattooArtists/${centerId}`)
     return res.data
 }
