@@ -1,8 +1,8 @@
 import "./CustomInput.css"
 
-export const CustomInput = ({placeholder, type, name, handler}) => {
+export const CustomInput = ({placeholder, type, name, value="", handler}) => {
 
     return (
-        <input placeholder={placeholder} type={type} name={name} onChange={(e) => handler(e)}></input>
+        <input placeholder={placeholder} type={type} name={name} value={value} onChange={(e) => handler(e)}></input>
     )
 }
