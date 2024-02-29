@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { Form, Button, Alert } from "react-bootstrap";
-import { userLogin } from "../../services/apiCalls";
-import { login, userData } from "../userSlice";
 import { jwtDecode } from "jwt-decode";
+import React, { useEffect, useState } from "react";
+import { Alert, Button, Form } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { userLogin } from "../../services/apiCalls";
+import { loggedIn, login, logout, userData } from "../userSlice";
 
-import "./Login.css";
+import { useNavigate } from "react-router-dom";
 import Logo from "../../assets/images/logo.png";
+import "./Login.css";
 
 export const Login = () => {
     const [credentials, setCredentials] = useState({
@@ -13,13 +15,27 @@ export const Login = () => {
         password: ''
     })
 
+    const userRdxData = useSelector(userData)
+    const loginExpiration = userRdxData.credentials?.userData?.exp;
+    
+    if(loginExpiration != null) {
+      verifyLoginExpiration(loginExpiration);
+    }
+
+    const isAuthenticated = useSelector(loggedIn);
+    
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
     useEffect(() => {
-      /*if (userData) {
+      //Se comprueba si está logueado
+      if (isAuthenticated) {
         navigate("/");
-      } */
+      } 
     }, []);
 
     const inputHandler = (event) => {
+      //Se setean las credenciales
         setCredentials((prevState) => ({
             ...prevState,
             [event.target.name]: event.target.value
@@ -30,32 +46,32 @@ export const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const submitHandler = async (event) => {
+    //Handler envío de formulario
     event.preventDefault();
     
     setShow(false);
     setLoading(true);
     await delay(500);
 
+    //Se procede con el login
     userLogin(credentials)
       .then((token) => {
+        //Se decodifica el token obtenido en la petición
         const decodedToken = jwtDecode(token);
 
         const data = {
           token: token,
           userData: decodedToken,
         };
+
         dispatch(login({ credentials: data }));
+
+        navigate("/");
       })
       .catch((err) => {
-        setError((prevState) => ({
-          ...prevState,
-          errorStatus: err.response.status,
-          errorMessage: err.response.data.error,
-        }))
+        console.log(err);
+
         setShow(true)
-        setTimeout(() => {
-          setShow(false)
-        }, 2000);
       });
 
     setLoading(false);
@@ -67,10 +83,23 @@ export const Login = () => {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
+  function  verifyLoginExpiration(exp) {
+    try {       
+      // Verifica la expiración
+      const currentTime = Math.floor(Date.now() / 1000); // Tiempo actual en segundos
+      
+      if (exp && currentTime > exp) {
+        dispatch(logout({ credentials: {} }));
+      } 
+
+    } catch (error) {
+        console.error('Error al verificar la expiración del token:', error.message);
+    }
+  }
+
   return (
     <div
       className="loginContenedor"
-//      style={{ backgroundImage: `url(${BackgroundImage})` }}
     >
         <div className="loginBackdrop"></div>
         <Form className="shadow p-4 bg-white rounded" onSubmit={submitHandler}>
