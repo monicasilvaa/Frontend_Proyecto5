@@ -28,10 +28,7 @@ Este proyecto se centra en el desarrollo del frontend para un sistema de gestió
 
 ## Tecnologías Utilizadas
 
-- TypeOrm.
-- ES6, TypeScript.
-- Uso de promesas y funcionalidad async/await.
-- Reactjs
+- Reactjs + Redux
 - Bootstrap
 ## Estructura del Repositorio
 
@@ -60,5 +57,5 @@ Este proyecto tiene como objetivo proporcionar un frontend eficiente para el sis
 
 ## Sobre el Proyecto
 
-Este es el quinto proyecto a realizar para el Bootcamp Geekshubs, destinado a desarrollar las habilidades en el manejo de tecnologías frontend y buenas prácticas de desarrollo.
+Este es el quinto proyecto a realizar para el Bootcamp Geekshubs Academy, destinado a desarrollar las habilidades en el manejo de tecnologías frontend y buenas prácticas de desarrollo.
 
