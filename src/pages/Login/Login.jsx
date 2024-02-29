@@ -14,7 +14,8 @@ export const Login = () => {
         email: '',
         password: ''
     })
-
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const userRdxData = useSelector(userData)
     const loginExpiration = userRdxData.credentials?.userData?.exp;
     
@@ -23,9 +24,6 @@ export const Login = () => {
     }
 
     const isAuthenticated = useSelector(loggedIn);
-    
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
 
     useEffect(() => {
       //Se comprueba si está logueado
