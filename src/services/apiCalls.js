@@ -79,6 +79,19 @@ export const getAppointmentsByClient = async (token) => {
     return res.data
 }
 
+export const getAppointmentsByTattooArtist = async (token) => {
+    const config = {
+        headers: {
+            Authorization: "Bearer " + token
+        }
+    }
+
+    const res = await axios.get(`${API_BASE_URL}/api/users/tattooArtistAppointments`, config)
+    return res.data
+}
+
+
+
 export const getAppointmentById = async (token, id) => {
     const config = {
         headers: {
