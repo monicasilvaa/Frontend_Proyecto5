@@ -1,0 +1,54 @@
+h1, h2, h3, h4, h5, h6 {
+    position: relative;
+    font-weight: 400;
+    margin: 0px;
+    background: none;
+    line-height: 104%;
+    letter-spacing: 0.03em;
+    font-family: 'Oswald', sans-serif;
+}
+
+.home-wrap {
+    margin-top: 0;
+    padding: 0;
+}
+
+.home-wrap .home-bg-img {
+    display: flex;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    background: url('https://cdn.pixabay.com/photo/2017/08/06/09/32/people-2590677_1280.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.home-wrap .home-bg-img .home-content h1 {
+    font-family: "Rozha One";
+    font-size: 110px;
+    line-height: 95%;
+    letter-spacing: -0.02em;
+    text-transform: capitalize;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+.home-wrap .home-bg-img .home-content p {
+    font-weight: 300;
+    font-size: 20px;
+    line-height: 200%;
+    letter-spacing: 0.02em;
+    color: #fff;
+}
+
+.sec-title h1 {
+    display: block;
+    font-size: 3rem;
+    text-transform: uppercase;
+    color: #111;
+    margin-bottom: 75px;
+}
+
+.gallery-wrap{
+    padding:3rem 0;
+}
