@@ -7,7 +7,8 @@ export const userSlice = createSlice({
     name: "user",
     initialState: {
         credentials: {},
-        vecesLoginLogout: 0
+        vecesLoginLogout: 0,
+        isAuthenticated: false
     },
 
     // los reducers no son más que funciones que reciben el estado actual y la modificación que queremos 
@@ -17,6 +18,7 @@ export const userSlice = createSlice({
             return {
                 ...state,
                 ...action.payload,
+                isAuthenticated: true,
                 vecesLoginLogout: state.vecesLoginLogout + 1
             }
         },
@@ -25,6 +27,7 @@ export const userSlice = createSlice({
             return {
                 ...state,
                 ...action.payload,
+                isAuthenticated: false,
                 vecesLoginLogout: state.vecesLoginLogout +1
             }
         },
@@ -43,4 +46,5 @@ export const { login, logout } = userSlice.actions;
 // este const es el nombre de la sección del almacén a la que tendré que ir,
 // const userRdxDetail = useSelector(userDetailId)
 export const userData = (state) => state.user;
+export const loggedIn = (state) => state.user?.isAuthenticated;
 export default userSlice.reducer;
