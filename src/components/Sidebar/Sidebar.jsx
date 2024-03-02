@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Dropdown from 'react-bootstrap/Dropdown';
-import { useSelector } from "react-redux";
-import { userData } from './../../pages/userSlice';
+import { useDispatch, useSelector } from "react-redux";
+import { logout, userData } from './../../pages/userSlice';
 import { getUserById } from './../../services/apiCalls';
 import './Sidebar.css';
 
@@ -12,6 +12,7 @@ export const Sidebar = (isAuthenticated) => {
   const userRdxData = useSelector(userData)
   const token = userRdxData.credentials.token;
   const userId = userRdxData.credentials.userData.userId;
+  const dispatch = useDispatch()
 
   useEffect(() => {
     getUserById( token, userId)
@@ -65,15 +66,6 @@ export const Sidebar = (isAuthenticated) => {
                       <Dropdown.Item href="/profile">Perfil</Dropdown.Item>
                       <Dropdown.Item onClick={() => logMeOut()}>Log out</Dropdown.Item>
                   </Dropdown.Menu>
-                  <ul className="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-                      <li><a className="dropdown-item" href="#">New project...</a></li>
-                      <li><a className="dropdown-item" href="#">Settings</a></li>
-                      <li><a className="dropdown-item" href="#">Profile</a></li>
-                      <li>
-                          <hr className="dropdown-divider" />
-                      </li>
-                      <li><a className="dropdown-item" href="#">Sign out</a></li>
-                  </ul>
                 </Dropdown>
           </div>
       </div>

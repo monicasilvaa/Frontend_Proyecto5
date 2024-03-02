@@ -151,15 +151,7 @@ export const Login = () => {
                     Accediendo ...
                 </Button>
             )}
-            <div className="d-grid justify-content-end">
-                <Button
-                    className="text-muted px-0"
-                    variant="link"
-                    onClick={handlePassword}
-                >
-                    ¿Has olvidado tu contraseña?
-                </Button>
-            </div>
+            
       </Form>
     </div>
   );
