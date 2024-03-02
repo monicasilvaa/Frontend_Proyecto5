@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Card } from 'react-bootstrap';
 import { ImageCard } from "../../components/ImageCard/ImageCard";
-import { NavBar } from "../../components/Navbar/Navbar";
 import { getCentersList, getTattooArtistsList } from "../../services/apiCalls";
 
 import "./Home.css";
@@ -38,8 +37,6 @@ export const Home = () => {
   return (
     
     <>
-      <NavBar />
-
       <section id="home" className="home-wrap">
 
         <div className="home-bg-img" >
@@ -67,7 +64,7 @@ export const Home = () => {
                 {tattooArtistsList ? (
                   tattooArtistsList.map(function(data) {
                     return (
-                      <ImageCard imageUrl={data.photo} title={data.username} text={data.email} />
+                      <ImageCard key={data.photo} imageUrl={data.photo} title={data.username} text={data.email} />
                     )
                   })
                 ) : ""}
@@ -80,7 +77,7 @@ export const Home = () => {
                 {centersList ? (
                   centersList.map(function(data) {
                     return (
-                      <Card className="col-xl-3 col-lg-6 col-md-6 mb-5">
+                      <Card key={data.id} className="col-xl-3 col-lg-6 col-md-6 mb-5">
                         <Card.Body>
                           <Card.Title>{data.address}</Card.Title>
                           <Card.Subtitle className="mb-2 text-muted">{data.phone}</Card.Subtitle>

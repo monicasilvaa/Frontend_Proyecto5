@@ -5,6 +5,9 @@ import Login from "../Login/Login"
 import { Profile } from "../Profile/Profile"
 import Register from "../Register/Register"
 import { Appointments } from "../User/Appointments"
+import { Dashboard } from "../User/Dashboard"
+import { ListAllAppointments } from "../User/ListAllAppointments"
+import { ListAllUsers } from "../User/ListAllUsers"
 import { TattooArtistsAppointments } from "../User/TattooArtistsAppointments"
 
 export const Body = () => {
@@ -19,9 +22,12 @@ export const Body = () => {
                 <Route path="/register" element={<Register /> } />                
                 
                 {/* Private routes */}
+                <Route path="/dashboard" element={<PrivateRoute Component={Dashboard} />} />
+                <Route path="/users" element={<PrivateRoute Component={ListAllUsers} />} />
                 <Route path="/profile" element={<PrivateRoute Component={Profile} />} />
                 <Route path="/myAppointments" element={<PrivateRoute Component={Appointments} />} />
                 <Route path="/tattooArtistAppointments" element={<PrivateRoute Component={TattooArtistsAppointments} />} />
+                <Route path="/appointments" element={<PrivateRoute Component={ListAllAppointments} />} />
             </Routes>
         </>
     )

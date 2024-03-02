@@ -46,6 +46,17 @@ export const userUpdate = async (token, id, userData) => {
     return res.data
 }
 
+export const appointmentUpdate = async (token, id, appointmentData) => {
+    const config = {
+        headers: {
+            Authorization: "Bearer " + token
+        }
+    }
+
+    const res = await axios.patch(`${API_BASE_URL}/api/appointments/${id}`, appointmentData, config)
+    return res.data
+}
+
 export const getUserById = async (token, id) => {
     const config = {
         headers: {
@@ -54,6 +65,17 @@ export const getUserById = async (token, id) => {
     }
 
     const res = await axios.get(`${API_BASE_URL}/api/users/profile/${id}`, config)
+    return res.data
+}
+
+export const getUsers = async (token) => {
+    const config = {
+        headers: {
+            Authorization: "Bearer " + token
+        }
+    }
+
+    const res = await axios.get(`${API_BASE_URL}/api/users`, config)
     return res.data
 }
 
@@ -76,6 +98,17 @@ export const getAppointmentsByClient = async (token) => {
     }
 
     const res = await axios.get(`${API_BASE_URL}/api/users/myAppointments`, config)
+    return res.data
+}
+
+export const getAppointments = async (token) => {
+    const config = {
+        headers: {
+            Authorization: "Bearer " + token
+        }
+    }
+
+    const res = await axios.get(`${API_BASE_URL}/api/appointments`, config)
     return res.data
 }
 

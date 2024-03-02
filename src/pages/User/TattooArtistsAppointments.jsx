@@ -113,11 +113,6 @@ export const TattooArtistsAppointments = () => {
 
   return (
     <>
-      <div>
-        <Button variant="primary" onClick={handleShow}>
-          Nueva cita
-        </Button>
-      </div>
       <Offcanvas show={show} onHide={handleClose}>
         <Offcanvas.Header closeButton>
           <Offcanvas.Title>Nueva cita</Offcanvas.Title>

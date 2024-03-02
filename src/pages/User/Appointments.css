@@ -1,11 +1,3 @@
-.profileDesign {
-    height: 100vh;
-    width: 100vw;
-    background-color: rgb(63, 63, 63);
-    color: rgba(208, 74, 74, 0.637)
-}
-
-#importante {
-    font-size:xx-large;
-    color: orange
+.offcanvas{
+    z-index:9999;
 }

@@ -10,7 +10,8 @@ import "./Profile.css";
 export const Profile = () => {
   const navigate = useNavigate();
   const [profileData, setProfileData] = useState({});
-  const [isEditing, setIsEditing] = useState(false);
+  const [message, setMessage] = useState(false);
+  const [error, setError] = useState(false);
 
   const userRdxData = useSelector(userData)
 
@@ -38,29 +39,22 @@ export const Profile = () => {
     //Se procede con el login
     userUpdate(token, myId, profileData)
       .then((response) => {
-          console.log(response);   
+          setMessage(response.message);   
       })
       .catch((err) => {
-        console.log(err);
+        setError(err.message);
       });    
   };
 
   return (
     <div className="profileDesign">
-      
-      { !!profileData.email 
-      ?
-      <>
-        <h1>{profileData.createdAt}</h1>
-        <h1>{profileData.email}</h1>
-        <h1>{profileData.role}</h1>
-        <h1>{profileData._id}</h1>
-      </> 
-      : <p>Cargando datos de perfil...</p>
-      }
-
         <div className="miDiv">
-            <Form className="shadow p-4 bg-white rounded" onSubmit={submitHandler}>
+            {error ? 
+              <p className="danger">{error}</p>  
+            :
+              <p className="success">{message}</p>
+            }
+            <Form className="text-center shadow p-4 bg-white rounded" onSubmit={submitHandler}>
                 <CustomInput type={"text"} name={"first_name"} value={profileData.first_name} placeholder="Nombre" handler={inputHandler} ></CustomInput>
                 <CustomInput type={"text"} name={"last_name"} value={profileData.last_name} placeholder="apellido" handler={inputHandler} ></CustomInput>
                 <CustomInput type={"email"} name={"email"} value={profileData.email} placeholder="email" handler={inputHandler} ></CustomInput>
@@ -68,7 +62,7 @@ export const Profile = () => {
                 <CustomInput type={"phone"} name={"phone"} value={profileData.phone} placeholder="Móvil" handler={inputHandler} ></CustomInput>
                 <CustomInput type={"date"} name={"birthday_date"} value={profileData.birthday_date} placeholder="Fecha de nacimiento" handler={inputHandler} ></CustomInput>
             
-                <Button className="w-100" variant="primary" type="submit">
+                <Button variant="primary" type="submit">
                         Actualizar
                     </Button>
             </Form>
